@@ -18,6 +18,7 @@ java -jar $EBROOTPICARD/picard.jar MarkDuplicates I=$BAM_IN O=$BAM_ROOT.sorted.m
 # Filter the marked bam
 echo "Filtering on quality, mapping, and duplication status"
 module load SAMtools/1.5
+module load BEDTools/2.26.0
 samtools view -@ 12 -b -h -F 4 -F 256 -F 1024 -F 2048 -q 30 $BAM_ROOT.sorted.md.bam > $BAM_ROOT.sorted.filtered.bam
 
 # Convert to bed format
@@ -27,7 +28,7 @@ bamToBed -i $BAM_ROOT.sorted.filtered.bam > $BAM_ROOT.sorted.filtered.bed
 
 # Intersect mapped and filtered reads with given features.
 echo "Checking for intersection with reference features"
-module load BEDTools/2.26.0
+#module load BEDTools/2.26.0
 printf "n_features\tn_reads\tn_overlapping_reads\n" > $BAM_ROOT.intersection.txt
 printf "%d\t%d\t%d\n" $(zcat $PEAK_F | wc -l) $(cat $BAM_ROOT.sorted.filtered.bed | wc -l) $(bedtools intersect -a $BAM_ROOT.sorted.filtered.bed -b $PEAK_F | wc -l) >> $BAM_ROOT.intersection.txt
 
