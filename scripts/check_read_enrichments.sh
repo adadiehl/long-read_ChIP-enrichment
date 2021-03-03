@@ -13,16 +13,16 @@ export PATH=$WD:$WD/scripts:$PATH
 # Mark duplicates with Picard tools
 echo "Checking for duplicate reads"
 module load picard/2.18.0
-#java -jar $EBROOTPICARD/picard.jar MarkDuplicates I=$BAM_IN O=$BAM_ROOT.sorted.md.bam ASSUME_SORTED=true METRICS_FILE=.picard.metrics VALIDATION_STRINGENCY=LENIENT TMP_DIR=. 2> /dev/null
+java -jar $EBROOTPICARD/picard.jar MarkDuplicates I=$BAM_IN O=$BAM_ROOT.sorted.md.bam ASSUME_SORTED=true METRICS_FILE=.picard.metrics VALIDATION_STRINGENCY=LENIENT TMP_DIR=. 2> /dev/null
 
 # Filter the marked bam
 echo "Filtering on quality, mapping, and duplication status"
-#samtools view -@ 12 -b -h -F 4 -F 256 -F 1024 -F 2048 -q 30 $BAM_ROOT.sorted.md.bam > $BAM_ROOT.sorted.filtered.bam
+samtools view -@ 12 -b -h -F 4 -F 256 -F 1024 -F 2048 -q 30 $BAM_ROOT.sorted.md.bam > $BAM_ROOT.sorted.filtered.bam
 
 # Convert to bed format
 echo "Converting to BED format"
 module load SAMtools/1.5
-#bamToBed -i $BAM_ROOT.sorted.filtered.bam > $BAM_ROOT.sorted.filtered.bed
+bamToBed -i $BAM_ROOT.sorted.filtered.bam > $BAM_ROOT.sorted.filtered.bed
 
 # Intersect mapped and filtered reads with given features.
 echo "Checking for intersection with reference features"
